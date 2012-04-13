@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>emailjs by eleith</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>emailjs</h1>
+        <p>html emails and attachments to any smtp server with nodejs</p>
+        <p class="view"><a href="https://github.com/eleith/emailjs">View the Project on GitHub <small>eleith/emailjs</small></a></p>
+        <ul>
+          <li><a href="https://github.com/eleith/emailjs/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/eleith/emailjs/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/eleith/emailjs">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>emailjs (v0.2.7)</h1>
+
+<p>send emails, html and attachments (files, streams and strings) from node.js to any smtp server</p>
+
+<h2>INSTALLING</h2>
+
+<pre><code>npm install emailjs
+</code></pre>
+
+<h2>FEATURES</h2>
+
+<ul>
+<li>works with SSL and TLS smtp servers (ex: gmail)</li>
+<li>supports smtp authentication (PLAIN, LOGIN, CRAMMD5)</li>
+<li>emails are queued and the queue is sent asynchronously</li>
+<li>supports sending html emails and emails with multiple attachments (MIME)</li>
+<li>attachments can be added as strings, streams or file paths</li>
+<li>works with nodejs 3.8 and above</li>
+</ul><h2>REQUIRES</h2>
+
+<ul>
+<li>access to an SMTP Server (ex: gmail)</li>
+</ul><h2>EXAMPLE USAGE - text only emails</h2>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">email</span>   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"./path/to/emailjs/email"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">server</span>  <span class="o">=</span> <span class="nx">email</span><span class="p">.</span><span class="nx">server</span><span class="p">.</span><span class="nx">connect</span><span class="p">({</span>
+   <span class="nx">user</span><span class="o">:</span>    <span class="s2">"username"</span><span class="p">,</span> 
+   <span class="nx">password</span><span class="o">:</span><span class="s2">"password"</span><span class="p">,</span> 
+   <span class="nx">host</span><span class="o">:</span>    <span class="s2">"smtp.gmail.com"</span><span class="p">,</span> 
+   <span class="nx">ssl</span><span class="o">:</span>     <span class="kc">true</span>
+
+<span class="p">});</span>
+
+<span class="c1">// send the message and get a callback with an error or details of the message that was sent</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+   <span class="nx">text</span><span class="o">:</span>    <span class="s2">"i hope this works"</span><span class="p">,</span> 
+   <span class="nx">from</span><span class="o">:</span>    <span class="s2">"you &lt;username@gmail.com&gt;"</span><span class="p">,</span> 
+   <span class="nx">to</span><span class="o">:</span>      <span class="s2">"someone &lt;someone@gmail.com&gt;, another &lt;another@gmail.com&gt;"</span><span class="p">,</span>
+   <span class="nx">cc</span><span class="o">:</span>      <span class="s2">"else &lt;else@gmail.com&gt;"</span><span class="p">,</span>
+   <span class="nx">subject</span><span class="o">:</span> <span class="s2">"testing emailjs"</span>
+<span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="nx">message</span><span class="p">);</span> <span class="p">});</span>
+</pre>
+</div>
+
+
+<h2>EXAMPLE USAGE - html emails and attachments</h2>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">email</span>   <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"./path/to/emailjs/email"</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">server</span>  <span class="o">=</span> <span class="nx">email</span><span class="p">.</span><span class="nx">server</span><span class="p">.</span><span class="nx">connect</span><span class="p">({</span>
+   <span class="nx">user</span><span class="o">:</span>    <span class="s2">"username"</span><span class="p">,</span> 
+   <span class="nx">password</span><span class="o">:</span><span class="s2">"password"</span><span class="p">,</span> 
+   <span class="nx">host</span><span class="o">:</span>    <span class="s2">"smtp.gmail.com"</span><span class="p">,</span> 
+   <span class="nx">ssl</span><span class="o">:</span>     <span class="kc">true</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="nx">text</span><span class="o">:</span>    <span class="s2">"i hope this works"</span><span class="p">,</span> 
+   <span class="nx">from</span><span class="o">:</span>    <span class="s2">"you &lt;username@gmail.com&gt;"</span><span class="p">,</span> 
+   <span class="nx">to</span><span class="o">:</span>      <span class="s2">"someone &lt;someone@gmail.com&gt;, another &lt;another@gmail.com&gt;"</span><span class="p">,</span>
+   <span class="nx">cc</span><span class="o">:</span>      <span class="s2">"else &lt;else@gmail.com&gt;"</span><span class="p">,</span>
+   <span class="nx">subject</span><span class="o">:</span> <span class="s2">"testing emailjs"</span>
+<span class="p">};</span>
+
+<span class="c1">// create the message</span>
+<span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span> <span class="nx">email</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">headers</span><span class="p">);</span>
+
+<span class="c1">// attach an alternative html email for those with advanced email clients</span>
+<span class="nx">message</span><span class="p">.</span><span class="nx">attach</span><span class="p">({</span><span class="nx">data</span><span class="o">:</span><span class="s2">"&lt;html&gt;i &lt;i&gt;hope&lt;/i&gt; this works!&lt;/html&gt;"</span><span class="p">,</span> <span class="nx">alternative</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+
+<span class="c1">// attach attachments because you can!</span>
+<span class="nx">message</span><span class="p">.</span><span class="nx">attach</span><span class="p">({</span><span class="nx">path</span><span class="o">:</span><span class="s2">"path/to/file.zip"</span><span class="p">,</span> <span class="nx">type</span><span class="o">:</span><span class="s2">"application/zip"</span><span class="p">,</span> <span class="nx">name</span><span class="o">:</span><span class="s2">"renamed.zip"</span><span class="p">});</span>
+
+<span class="c1">// send the message and get a callback with an error or details of the message that was sent</span>
+<span class="nx">server</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">err</span> <span class="o">||</span> <span class="nx">message</span><span class="p">);</span> <span class="p">});</span>
+
+<span class="c1">// you can continue to send more messages with successive calls to 'server.send', </span>
+<span class="c1">// they will be queued on the same smtp connection</span>
+
+<span class="c1">// or you can create a new server connection with 'email.server.connect' </span>
+<span class="c1">// to asynchronously send individual emails instead of a queue</span>
+</pre>
+</div>
+
+
+<h1>API</h1>
+
+<h2>email.server.connect(options)</h2>
+
+<pre><code>// options is an object with the following keys
+options =
+{
+    user        // username for logging into smtp 
+    password // password for logging into smtp
+    host        // smtp host
+    port        // smtp port (if null a standard port number will be used)
+    ssl     // boolean or object {key, ca, cert} (if exists, ssl connection will be made)
+    tls     // boolean (if true, starttls will be initiated)
+    timeout // max number of milliseconds to wait for smtp responses (defaults to 5000)
+    domain  // domain to greet smtp with (defaults to os.hostname)
+}
+</code></pre>
+
+<h2>email.server.send(message, callback)</h2>
+
+<pre><code>// message can be a smtp.Message (as returned by email.message.create)
+// or an object identical to the first argument accepted by email.message.create
+
+// callback will be executed with (err, message)
+// either when message is sent or an error has occurred
+</code></pre>
+
+<h2>email.message.create(headers)</h2>
+
+<pre><code>// headers is an object ('from' and 'to' are required)
+// returns a Message object
+
+// you can actually pass more message headers than listed, the below are just the
+// most common ones you would want to use
+
+headers =
+{
+    text        // text of the email 
+    from        // sender of the format (address or name &lt;address&gt; or "name" &lt;address&gt;)
+    to          // recipients (same format as above), multiple recipients are separated by a comma
+    cc          // carbon copied recipients (same format as above)
+    bcc     // blind carbon copied recipients (same format as above)
+    subject // string subject of the email
+}
+</code></pre>
+
+<h2>Message.attach(options)</h2>
+
+<pre><code>// can be called multiple times, each adding a new attachment
+// options is an object with the following possible keys:
+
+options =
+{
+    // one of these fields is required
+    path      // string to where the file is located
+    data      // string of the data you want to attach
+    stream    // binary stream that will provide attachment data (make sure it is in the paused state)
+              // better performance for binary streams is achieved if buffer.length % (76*6) == 0
+              // current max size of buffer must be no larger than Message.BUFFERSIZE
+
+    // optionally these fields are also accepted
+    type          // string of the file mime type
+    name        // name to give the file as perceived by the recipient
+    alternative // if true, will be attached inline as an alternative (also defaults type='text/html')
+    inline      // if true, will be attached inline
+    encoded     // set this to true if the data is already base64 encoded, (avoid this if possible)
+    headers     // object containing header=&gt;value pairs for inclusion in this attachment's header
+    related     // an array of attachments that you want to be related to the parent attachment
+}
+</code></pre>
+
+<h2>Authors</h2>
+
+<p>eleith</p>
+
+<h2>Testing</h2>
+
+<pre><code>npm install -d
+npm test
+</code></pre>
+
+<h2>Contributions</h2>
+
+<p>issues and pull requests are welcome</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/eleith">eleith</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
